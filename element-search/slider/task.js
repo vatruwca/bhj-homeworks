@@ -1,42 +1,45 @@
-const sliderItems = document.querySelectorAll('.slider__item');
+const sliderItems = Array.from(document.querySelectorAll('.slider__item'));
 const sliderCount = sliderItems.length;
-const dots = document.querySelectorAll('.slider__dot');
+const dots = Array.from(document.querySelectorAll('.slider__dot'));
 const prev = document.querySelector('.slider__arrow_prev');
 const next = document.querySelector('.slider__arrow_next');
 
-let slideIndex = 0;
-
-function toggleActiveSlide(slideIndex) {
-    let activeSlide = document.querySelector('.slider__item_active');
-    let activeDot = document.querySelector('.slider__dot_active');
-    activeSlide.classList.remove('slider__item_active');
-    activeDot.classList.remove('slider__dot_active');
-    sliderItems[slideIndex].classList.add('slider__item_active');
-    dots[slideIndex].classList.add('slider__dot_active');   
+function indexActiveSlide() {
+    slideIndex = sliderItems.findIndex(item => item.classList.contains('slider__item_active'));     
 }
 
-prev.onclick = function() {
+function toggleActiveDot() {
+    dots.forEach(item => item.classList.remove('slider__dot_active'));
+    dots[slideIndex].classList.add('slider__dot_active');
+}
+
+prev.onclick = function () {
+    indexActiveSlide();
+    sliderItems[slideIndex].classList.remove('slider__item_active');
     slideIndex--;
     if (slideIndex < 0) {
         slideIndex = sliderCount - 1;
     }
-    toggleActiveSlide(slideIndex);
-    return slideIndex;
+    sliderItems[slideIndex].classList.add('slider__item_active');
+    toggleActiveDot();
 }
 
-
-next.onclick = function() {
+next.onclick = function () {
+    indexActiveSlide();
+    sliderItems[slideIndex].classList.remove('slider__item_active');
     slideIndex++;
-    if (slideIndex === sliderCount) {
+    if (slideIndex == sliderCount) {
         slideIndex = 0;
     }
-    toggleActiveSlide(slideIndex);
-    return slideIndex;
+    sliderItems[slideIndex].classList.add('slider__item_active');
+    toggleActiveDot();
 }
 
-
-for (let i = 0; i < sliderCount; i++) {
-    dots[i].onclick = function() {
-        toggleActiveSlide(i);
+dots.forEach((item, idx) => {
+    item.onclick = function() {
+        sliderItems.forEach(item => item.classList.remove('slider__item_active'));
+        sliderItems[idx].classList.add('slider__item_active');    
+        indexActiveSlide();
+        toggleActiveDot();
     }
-}
+})
